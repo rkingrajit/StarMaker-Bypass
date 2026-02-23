@@ -1,0 +1,10 @@
+Package: com.bestfriend.starmakerbypass
+Name: StarMakerBypass
+Depends: mobilesubstrate
+Version: 1.0
+Architecture: iphoneos-arm
+Description: 100% Working StarMaker Network Bypass
+Maintainer: BestFriend
+Author: BestFriend
+Section: Tweaks
+
