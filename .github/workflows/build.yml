@@ -18,13 +18,14 @@ jobs:
           
       - name: Setup iOS SDK
         run: |
-          rm -rf $THEOS/sdks
-          git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks
+          mkdir -p $THEOS/sdks
+          git clone --depth 1 https://github.com/theos/sdks.git temp_sdks
+          mv temp_sdks/* $THEOS/sdks/
+          rm -rf temp_sdks
 
       - name: Build Tweak
         run: |
           export THEOS=$THEOS
-          cd ${{ github.workspace }}
           make package FINALPACKAGE=1
         
       - name: Upload Artifact
