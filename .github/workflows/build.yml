@@ -16,12 +16,10 @@ jobs:
           rm -rf $THEOS
           git clone --recursive https://github.com/theos/theos.git $THEOS
           
-      - name: Setup iOS SDK (Final Fix)
+      - name: Setup iOS SDK (Guru-Fix)
         run: |
-          mkdir -p $THEOS/sdks
-          git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks
-          # Server ko files dikhane ke liye listing command
-          ls -R $THEOS/sdks
+          # Agar clone fail hota hai toh ye rasta hamesha chalta hai
+          git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks || (mkdir -p $THEOS/sdks && curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip && unzip -q sdks.zip && mv sdks-master/* $THEOS/sdks/)
 
       - name: Build Tweak
         run: |
