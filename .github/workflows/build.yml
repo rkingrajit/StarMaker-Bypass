@@ -7,11 +7,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      # 1. Tumhara StarMaker ka code layega
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Asli Hacker Method: Theos ko GitHub ke system se hi nikalega (No Error)
+      # YAHAN HAI ASALI FIX: ldid install karna
+      - name: Install ldid (The Missing Tool)
+        run: brew install ldid
+
       - name: Checkout Theos Natively
         uses: actions/checkout@v4
         with:
@@ -19,7 +21,6 @@ jobs:
           submodules: recursive
           path: theos
 
-      # 3. SDKs ko safe tarike se unzip karega
       - name: Install iOS SDK
         run: |
           curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip
@@ -27,15 +28,13 @@ jobs:
           mv sdks-master/* theos/sdks/
           rm -rf sdks-master sdks.zip
 
-      # 4. Final VIP Bypass Build
       - name: Compile and Package
         run: |
           export THEOS=${{ github.workspace }}/theos
           make package FINALPACKAGE=1
 
-      # 5. File Upload (Jeet ki nishani)
       - name: Upload Tweak File
         uses: actions/upload-artifact@v4
         with:
-          name: StarMaker-VIP-Bypass
+          name: StarMaker-Final-Bypass
           path: packages/*.deb
