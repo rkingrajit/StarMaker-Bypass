@@ -13,16 +13,16 @@ jobs:
 
       - name: Setup Theos
         run: |
+          sudo rm -rf $THEOS
           git clone --recursive https://github.com/theos/theos.git $THEOS
           
       - name: Setup iOS SDK
         run: |
           mkdir -p $THEOS/sdks
-          curl -LO https://github.com/theos/sdks/archive/master.zip
-          unzip master.zip
-          mv sdks-master/* $THEOS/sdks-master/ 2>/dev/null || true
-          # Direct download rasta for stability
-          git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks
+          curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip
+          unzip -q sdks.zip
+          mv sdks-master/* $THEOS/sdks/
+          rm -rf sdks-master sdks.zip
 
       - name: Build Tweak
         run: |
