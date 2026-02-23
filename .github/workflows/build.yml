@@ -1,4 +1,3 @@
-
 name: Build Tweak
 on: [push]
 jobs:
@@ -21,10 +20,12 @@ jobs:
           
       - name: Setup iOS SDKs
         run: |
-          git clone https://github.com/theos/sdks.git $THEOS/sdks
+          git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks
           
       - name: Build Tweak
-        run: make package FINALPACKAGE=1
+        run: |
+          export THEOS=$THEOS
+          make package FINALPACKAGE=1
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
