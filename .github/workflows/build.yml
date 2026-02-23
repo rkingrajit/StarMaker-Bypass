@@ -5,38 +5,26 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: write
-    env:
-      THEOS: ${{ github.workspace }}/theos
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: Setup Theos Lite
         run: |
-          # Sab kuch naye sire se force install
-          rm -rf $THEOS
-          git clone --recursive https://github.com/theos/theos.git $THEOS
-          
-      - name: Fix SDK Location
-        run: |
-          # SDK ko direct server ke system mein inject karna
-          mkdir -p $THEOS/sdks
+          git clone --recursive https://github.com/theos/theos.git ~/theos
+          # Manual SDK Fix jo 100% work karega
           curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip
           unzip -q sdks.zip
-          cp -r sdks-master/* $THEOS/sdks/
-          rm -rf sdks-master sdks.zip
-          # Path verification
-          ls $THEOS/sdks
-
-      - name: Build Tweak (Final Run)
+          mkdir -p ~/theos/sdks
+          mv sdks-master/* ~/theos/sdks/
+          
+      - name: Final Build
         run: |
-          export THEOS=$THEOS
-          # Build command ko clean karke chalana
-          make clean
+          export THEOS=~/theos
           make package FINALPACKAGE=1
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Bypass-DEB
+          name: StarMaker-Bypass
           path: packages/*.deb
