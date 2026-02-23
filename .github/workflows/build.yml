@@ -2,29 +2,31 @@ name: Build Tweak
 on: [push]
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-13
     permissions:
       contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Theos Lite
+      - name: Force Setup Environment
         run: |
+          # Clean setup for Mac 13
+          brew install ldid
           git clone --recursive https://github.com/theos/theos.git ~/theos
-          # Manual SDK Fix jo 100% work karega
           curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip
           unzip -q sdks.zip
           mkdir -p ~/theos/sdks
-          mv sdks-master/* ~/theos/sdks/
+          cp -r sdks-master/* ~/theos/sdks/
           
-      - name: Final Build
+      - name: Final Build Execution
         run: |
           export THEOS=~/theos
+          # Build command with force flags
           make package FINALPACKAGE=1
         
-      - name: Upload Artifact
+      - name: Upload StarMaker Bypass
         uses: actions/upload-artifact@v4
         with:
-          name: StarMaker-Bypass
+          name: StarMaker-Final-Bypass
           path: packages/*.deb
