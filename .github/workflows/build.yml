@@ -11,20 +11,28 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Theos
+      - name: Setup Environment
         run: |
+          # Sab kuch naye sire se force install
           rm -rf $THEOS
           git clone --recursive https://github.com/theos/theos.git $THEOS
           
-      - name: Setup iOS SDK (Guru-Fix)
+      - name: Fix SDK Location
         run: |
-          # Agar clone fail hota hai toh ye rasta hamesha chalta hai
-          git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks || (mkdir -p $THEOS/sdks && curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip && unzip -q sdks.zip && mv sdks-master/* $THEOS/sdks/)
+          # SDK ko direct server ke system mein inject karna
+          mkdir -p $THEOS/sdks
+          curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip
+          unzip -q sdks.zip
+          cp -r sdks-master/* $THEOS/sdks/
+          rm -rf sdks-master sdks.zip
+          # Path verification
+          ls $THEOS/sdks
 
-      - name: Build Tweak
+      - name: Build Tweak (Final Run)
         run: |
           export THEOS=$THEOS
-          cd ${{ github.workspace }}
+          # Build command ko clean karke chalana
+          make clean
           make package FINALPACKAGE=1
         
       - name: Upload Artifact
