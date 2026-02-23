@@ -16,10 +16,11 @@ jobs:
           rm -rf $THEOS
           git clone --recursive https://github.com/theos/theos.git $THEOS
           
-      - name: Setup iOS SDK (The Fix)
+      - name: Setup iOS SDK (Final Fix)
         run: |
+          mkdir -p $THEOS/sdks
           git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks
-          # Yahan hum path confirm kar rahe hain taki server bhatke nahi
+          # Server ko files dikhane ke liye listing command
           ls -R $THEOS/sdks
 
       - name: Build Tweak
