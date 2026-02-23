@@ -10,18 +10,20 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: Install Dependencies
-        run: brew install ldid xz
-        
+
       - name: Setup Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git $THEOS
           
-      - name: Setup iOS SDKs
+      - name: Setup iOS SDK
         run: |
+          mkdir -p $THEOS/sdks
+          curl -LO https://github.com/theos/sdks/archive/master.zip
+          unzip master.zip
+          mv sdks-master/* $THEOS/sdks-master/ 2>/dev/null || true
+          # Direct download rasta for stability
           git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks
-          
+
       - name: Build Tweak
         run: |
           export THEOS=$THEOS
