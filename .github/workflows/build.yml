@@ -3,6 +3,8 @@ on: [push]
 jobs:
   build:
     runs-on: macos-latest
+    permissions:
+      contents: write
     env:
       THEOS: ${{ github.workspace }}/theos
     steps:
@@ -13,15 +15,12 @@ jobs:
         run: brew install ldid xz
         
       - name: Setup Theos
-        uses: actions/checkout@v4
-        with:
-          repository: theos/theos
-          path: theos
-          submodules: recursive
+        run: |
+          git clone --recursive https://github.com/theos/theos.git $THEOS
           
       - name: Setup iOS SDKs
         run: |
-          git clone https://github.com/theos/sdks.git theos/sdks
+          git clone https://github.com/theos/sdks.git $THEOS/sdks
           
       - name: Build Tweak
         run: make package FINALPACKAGE=1
@@ -31,4 +30,3 @@ jobs:
         with:
           name: Bypass-DEB
           path: packages/*.deb
-          
