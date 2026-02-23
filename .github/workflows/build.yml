@@ -16,16 +16,16 @@ jobs:
           rm -rf $THEOS
           git clone --recursive https://github.com/theos/theos.git $THEOS
           
-      - name: Setup iOS SDK
+      - name: Setup iOS SDK (The Fix)
         run: |
-          mkdir -p $THEOS/sdks
-          git clone --depth 1 https://github.com/theos/sdks.git temp_sdks
-          mv temp_sdks/* $THEOS/sdks/
-          rm -rf temp_sdks
+          git clone --depth 1 https://github.com/theos/sdks.git $THEOS/sdks
+          # Yahan hum path confirm kar rahe hain taki server bhatke nahi
+          ls -R $THEOS/sdks
 
       - name: Build Tweak
         run: |
           export THEOS=$THEOS
+          cd ${{ github.workspace }}
           make package FINALPACKAGE=1
         
       - name: Upload Artifact
