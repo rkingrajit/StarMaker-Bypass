@@ -1,32 +1,40 @@
 name: Build Tweak
-on: [push]
+on: [push, workflow_dispatch]
+
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-latest
     permissions:
       contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Force Setup Environment
+      - name: Install System Tools
+        run: brew install ldid xz
+
+      - name: Clean Environment
+        run: rm -rf ${{ github.workspace }}/theos
+
+      - name: Setup Theos
         run: |
-          # Clean setup for Mac 13
-          brew install ldid
-          git clone --recursive https://github.com/theos/theos.git ~/theos
-          curl -L https://github.com/theos/sdks/archive/master.zip -o sdks.zip
-          unzip -q sdks.zip
-          mkdir -p ~/theos/sdks
-          cp -r sdks-master/* ~/theos/sdks/
+          git clone --recursive https://github.com/theos/theos.git ${{ github.workspace }}/theos
           
-      - name: Final Build Execution
+      - name: Setup SDKs (Direct Extract Method)
         run: |
-          export THEOS=~/theos
-          # Build command with force flags
+          # Git ka use nahi karenge, seedha tar file download karke extract karenge
+          curl -sL https://github.com/theos/sdks/archive/master.tar.gz | tar xz
+          mkdir -p ${{ github.workspace }}/theos/sdks
+          mv sdks-master/* ${{ github.workspace }}/theos/sdks/
+
+      - name: Build Final Bypass
+        run: |
+          export THEOS=${{ github.workspace }}/theos
+          make clean
           make package FINALPACKAGE=1
         
-      - name: Upload StarMaker Bypass
+      - name: Upload Bypass Package
         uses: actions/upload-artifact@v4
         with:
-          name: StarMaker-Final-Bypass
+          name: StarMaker-Working-Bypass
           path: packages/*.deb
